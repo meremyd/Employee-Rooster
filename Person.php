@@ -1,9 +1,9 @@
 <?php
 
 class Person {
-    private $name;
-    private $address;
-    private $age;
+    private string $name;
+    private string $address;
+    private int $age;
 
     public function __construct($name, $address, $age) {
         $this->name = $name;
@@ -11,34 +11,21 @@ class Person {
         $this->age = $age;
     }
 
-    public function getName(){
+    public function getName(): string {
         return $this->name;
     }
 
-    public function setName($name){
-        $this->name = $name;
-    }
-
-    public function getAddress(){
+    public function getAddress(): string {
         return $this->address;
     }
 
-    public function setAddress($address){
-        $this->address = $address;
-    }
-
-    public function getAge(){
+    public function getAge(): int {
         return $this->age;
     }
 
-    public function setAge($age){
-        $this->age = $age;
+    public function __toString(): string {
+        return "Name: {$this->name}, Address: {$this->address}, Age: {$this->age}";
     }
-
-    public function __toString() {
-        return "Name: $this->name\nAddress: $this->address\nAge: $this->age";
-    }
-
 }
 
-
+ 
