@@ -1,64 +1,91 @@
 <?php
+require_once 'EmployeeRoster.php';
+require_once 'CommissionEmployee.php';
+require_once 'HourlyEmployee.php';
+require_once 'PieceWorker.php';
 
 class Main {
-    public function main() {
-        // 1. Play Intro -> void
-        // 2. Enter Roster Size -> size
-        // 3. Instantiate Roster (size) -> Roster
-        // 4. Display Menu -> void
-        //      4.1 Add Employee (if not full)
-        //          Name -> name
-        //          Address -> address
-        //          Company -> company name
-        //          Age -> age
-        //          Type of Employee
-        //              4.1.1   Commissioned Employee
-        //                      Regular Salary -> salary
-        //                      Number of Commissioned Items -> items
-        //                      Commission Rate -> rate
-        //
-        //              4.1.2   Hourly Employee
-        //                      Hours Worked -> hours
-        //                      Hourly Rate -> rate
-        //
-        //              4.1.3   Piece Worker
-        //                      Number of Items Produced -> items
-        //                      Wage per item -> wage
-        //      
-        //      4.2 Delete Employee
-        //          Display All Employees
-        //          Select Employee to Delete
-        //  
-        //      4.3 Other Menu
-        //          4.3.1   Display
-        //              4.3.1.1 Display All Employees
-        //              4.3.1.2 Display Commissioned Employees
-        //              4.3.1.3 Display Hourly Employees
-        //              4.3.1.4 Display Piece Workers
-        //
-        //          4.3.2   Count
-        //              4.3.2.1 Count All Employees
-        //              4.3.2.2 Count Commissioned Employees
-        //              4.3.2.3 Count Hourly Employees
-        //              4.3.2.4 Count Piece Workers
-        //
-        //          4.3.3   Payroll
-        //              Name
-        //              Address
-        //              Age
-        //              Company
-        //                  4.3.3.1 Commissioned Employees
-        //                      Items Sold
-        //                      Commission Rate
-        //                      Earnings
-        //                  4.3.3.2 Hourly Employees
-        //                      Hours Worked
-        //                      Hourly Rate
-        //                      Earnings
-        //                  4.3.3.3 Piece Workers
-        //                      Items Produced
-        //                      Wage per item
-        //                      Earnings
+    private EmployeeRoster $roster;
 
+    public function start() {
+        $rosterSize = (int) readline("Enter the size of the roster: ");
+        $this->roster = new EmployeeRoster($rosterSize);
+        $this->entrance();
+    }
+
+    public function entrance() {
+        while (true) {
+            $this->menu();
+            $choice = (int) readline("Choose an option: ");
+            switch ($choice) {
+                case 1:
+                    $this->addEmployee();
+                    break;
+                case 2:
+                    $index = (int) readline("Enter index to remove: ");
+                    $this->roster->remove($index);
+                    break;
+                case 3:
+                    $this->roster->display();
+                    break;
+                case 4:
+                    $this->roster->payroll();
+                    break;
+                case 0:
+                    echo "Exiting.\n";
+                    return;
+                default:
+                    echo "Invalid input. Please try again.\n";
+            }
+        }
+    }
+
+    private function menu() {
+        echo "*** EMPLOYEE ROSTER MENU ***\n";
+        echo "[1] Add Employee\n";
+        echo "[2] Delete Employee\n";
+        echo "[3] Display Employees\n";
+        echo "[4] Payroll\n";
+        echo "[0] Exit\n";
+    }
+
+    private function addEmployee() {
+        $name = readline("Enter name: ");
+        
+
+        if ($this->roster->hasEmployeeWithName($name)) {
+            echo "An employee with the name '$name' already exists. Please use a unique name.\n";
+            return;
+        }
+
+        $address = readline("Enter address: ");
+        $age = (int) readline("Enter age: ");
+        $companyName = readline("Enter company name: ");
+
+        echo "[1] Commission Employee, [2] Hourly Employee, [3] Piece Worker\n";
+        $type = (int) readline("Select type of employee: ");
+        switch ($type) {
+            case 1:
+                $salary = (float) readline("Enter regular salary: ");
+                $itemsSold = (int) readline("Enter items sold: ");
+                $commissionRate = (float) readline("Enter commission rate: ");
+                $employee = new CommissionEmployee($name, $address, $age, $companyName, $salary, $itemsSold, $commissionRate);
+                break;
+            case 2:
+                $hoursWorked = (int) readline("Enter hours worked: ");
+                $rate = (float) readline("Enter rate per hour: ");
+                $employee = new HourlyEmployee($name, $address, $age, $companyName, $hoursWorked, $rate);
+                break;
+            case 3:
+                $itemsProduced = (int) readline("Enter items produced: ");
+                $wagePerItem = (float) readline("Enter wage per item: ");
+                $employee = new PieceWorker($name, $address, $age, $companyName, $itemsProduced, $wagePerItem);
+                break;
+            default:
+                echo "Invalid input.\n";
+                return;
+        }
+        $this->roster->add($employee);
     }
 }
+ 
